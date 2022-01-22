@@ -1,16 +1,28 @@
 import { RequiredByPath } from '.';
 import { expectNotType, expectType, expectError, expectAssignable, expectNotAssignable } from 'tsd';
-
 describe('test', () => {
-  it('should make all properties required', () => {
-    type T1 = RequiredByPath<{ a?: { b?: 1 } }, ['a.b']>
+  it('WTF? opened a ticket maybe they can explain', () => {
+    //https://github.com/SamVerschueren/tsd/issues/141
+    type T0 = RequiredByPath<{ a?: { b?: 1 } }, 'a.b'>
 
-    expectNotType<T1>({a:{b:1}})
+    expectNotType<T0>({a:{b:1}})
+    expectType<T0>({a:{b:1}})
+
+    expectNotAssignable<T0>({a:{b:1}})
+    expectAssignable<T0>({a:{b:1}})
+
+
+  })
+  it('should make all properties required', () => {
+    type T1 = RequiredByPath<{ a?: { b?: 1 } }, 'a.b'>
     expectNotType<T1>({});
 
     expectType<T1['a']['b']>(1)
     expectNotType<T1['a']['b']>(2)
+    expectNotType<T1['a']['b']>(undefined)
+    expectNotType<T1['a']['b']>(null)
   })
+
   it('should leave optional property option', () => {
     type T2 = RequiredByPath<{ a?: { b?: 1, c?: 1 } }, ['a.b']>
 
