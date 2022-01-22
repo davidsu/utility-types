@@ -1,6 +1,6 @@
 import { RequiredByPath } from '.';
 import { expectNotType, expectType, expectError, expectAssignable, expectNotAssignable } from 'tsd';
-import {Alike, Debug, Expect} from '@type-challenges/utils'
+import {Alike, Debug, Expect, MergeInsertions} from '@type-challenges/utils'
 describe('test', () => {
   it('WTF? opened a ticket maybe they can explain', () => {
     //https://github.com/SamVerschueren/tsd/issues/141

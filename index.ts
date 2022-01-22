@@ -1,26 +1,14 @@
-export type RequiredByPathSingle< T extends Record<keyof any, any>, S extends string > =
-  S extends `${infer Head}.${infer Tail}` ?
-    Head extends keyof T ?
-      { [P in Head]: RequiredByPathSingle<Required<T>[P], Tail> } & Pick<T, Exclude<keyof T, Head>> :
-      never :
-    S extends keyof Required<T> ?
-      { [P in S]-?: NonNullable<T[P]> } & Pick<T, Exclude<keyof T, S>> :
-      never;
+import {FilterByStart, MapToPathTail, UnionFirst} from "./helpers";
 
-export type RequiredByPathMultiple<T extends Record<keyof any, any>, S extends string[]> =
-  S extends {length: 1} ?
-    RequiredByPathSingle<T, S[0]> :
-    S extends [ infer Head, ...infer Tail ] ?
-      Head extends string ?
-        Tail extends string[] ?
-          RequiredByPathSingle<T, Head> & RequiredByPathMultiple<T, Tail>
-          : never
-        : never
-      : never;
+type Id<S> = S extends string ? S : never
+type MapFilterToTail<T extends string[], S> = MapToPathTail<FilterByStart<T, `${Id<S>}.`>>
+type RBP<T extends Record<string, any>, S extends string[]> =
+    S extends {length: 0} ?
+      NonNullable<T> :
+      Pick<T, Exclude<keyof T, UnionFirst<S>>> &
+      { [P in Extract<keyof T, UnionFirst<S>>]: RBP<Required<T>[P], MapFilterToTail<S, P>> }
 
 export type RequiredByPath<T extends Record<keyof any, any>, S extends string[] | string> =
-  S extends string ?
-    RequiredByPathSingle<T, S> :
     S extends string[] ?
-      RequiredByPathMultiple<T, S> :
-      never;
+      RBP<T, S> :
+      RBP<T, [Id<S>]> 
