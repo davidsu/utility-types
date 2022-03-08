@@ -31,7 +31,7 @@ export type FilterByStart<T extends string[], S extends string, Result extends s
   T extends [infer Head, ...infer Tail] ?
     Head extends `${S}${infer Path}`?
       FilterByStart<Id<Tail>, S, [Head, ...Result]> :
-      Result:
+      FilterByStart<Id<Tail>, S, Result> :
     Result
 
 export type MapToPathTail<T extends string[], Result extends string[] = []> = 
